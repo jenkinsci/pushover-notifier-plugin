@@ -29,14 +29,16 @@ public class PushoverNotifier extends Notifier {
     public final String userToken;
     public final String device;
     public final boolean notifyOnSuccess;
+    public final boolean notifyOnUnstable;
     private transient PushoverApi pushoverApi;
 
     @DataBoundConstructor
-    public PushoverNotifier(String appToken,  String userToken, String device,  boolean notifyOnSuccess) {
+    public PushoverNotifier(String appToken,  String userToken, String device,  boolean notifyOnSuccess,  boolean notifyOnUnstable) {
         this.appToken = appToken;
         this.userToken = userToken;
         this.device = device;
         this.notifyOnSuccess = notifyOnSuccess;
+        this.notifyOnUnstable = notifyOnUnstable;
     }
 
     public BuildStepMonitor getRequiredMonitorService() {
@@ -59,6 +61,7 @@ public class PushoverNotifier extends Notifier {
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener)
             throws InterruptedException, IOException {
         if (!build.getResult().toString().equals(Result.SUCCESS.toString()) || notifyOnSuccess) {
+          if (!build.getResult().toString().equals(Result.UNSTABLE.toString()) || notifyOnUnstable) {
             initializePushover();
             String message = build.getProject().getName() + ": " + build.getResult().toString() + "\n";
             if (!build.getCulprits().isEmpty()) {
@@ -68,6 +71,7 @@ public class PushoverNotifier extends Notifier {
             }
             LOG.info("Sending Pushover message");
             pushoverApi.sendMessage(message);
+          }
         }
         return true;
     }

@@ -17,5 +17,9 @@
     <f:entry title="Send notifications for successful builds" field="notifyOnSuccess">
         <f:checkbox field="notifyOnSuccess" checked="${notifyOnSuccess}" />
     </f:entry>
+
+    <f:entry title="Send notifications for unstable builds" field="notifyOnUnstable">
+        <f:checkbox field="notifyOnUnstable" checked="${notifyOnUnstable}" />
+    </f:entry>
     
 </j:jelly>
